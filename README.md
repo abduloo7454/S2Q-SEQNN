@@ -20,17 +20,17 @@ bash reproduce.sh            # writes every table, figure, and macro file to out
 
 | Paper item | Script (`analysis/`) | Input (`results/`) |
 |---|---|---|
-| Tables III, IV, V; S1, S2, S4, S6, S7, S8 | `build_tables.py` | `all_runs.csv` |
+| Tables 3, 4, 5; S1, S2, S4, S6, S7, S8 | `build_tables.py` | `all_runs.csv` |
 | Fig. 3 (parameters vs accuracy) | `make_param_figure.py` | `all_runs.csv` |
 | Fig. 4 (paired differences) | `make_fig1_forest.py` | `all_runs.csv` |
-| Fig. 5, Tables VI, S9 (tangent space) | `analyze_tangent.py`, `make_tangent_figure.py` | `tangent/` |
+| Fig. 5, Tables 6, S9 (tangent space) | `analyze_tangent.py`, `make_tangent_figure.py` | `tangent/` |
 | Tables S10, S11 (equivalence, controls without fusion) | `make_equivalence.py` | `all_runs.csv`, `tqe/nofusion/` |
 | Table S12 (8 to 15 qubits) | `make_scaling.py` | `all_runs.csv`, `tqe/scale_*/` |
 | Fig. 6, Tables S13, S14 (barren-plateau scan) | `make_geom_figure.py` | `geom/` |
 | Table S15 (minimum detectable effect) | `make_power.py` | `all_runs.csv` |
 | Section V-B positive control, Table S16 | `make_teacher.py` | `teacher/`, `all_runs.csv` |
 | Table S5 (depolarizing noise) | `make_noise_table.py` | `noise/`, `all_runs.csv` |
-| Table VII, Fig. 7 (ibm_kingston, three seeds) | `make_hw_seeds.py`, `make_hw_seeds_figure.py` | `hardware/run_*` |
+| Table 7, Fig. 7 (ibm_kingston, three seeds) | `make_hw_seeds.py`, `make_hw_seeds_figure.py` | `hardware/run_*` |
 | Fig. S1 (qubit placement) | `make_hardware_figure.py` | `hardware/run_frozen*` |
 
 ## The run logs

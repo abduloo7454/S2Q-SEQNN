@@ -3,7 +3,7 @@
 Fig. 1(b): the headline result as a forest plot.
 
 Every interval is recomputed from the run log with the same functions that
-build Table VI (build_tables.py: paired t-test, 95% CI on the seed-paired
+build Table 5 (build_tables.py: paired t-test, 95% CI on the seed-paired
 difference, Holm over the full family), so the figure and the table cannot
 disagree. Nothing is typed by hand.
 

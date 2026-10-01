@@ -8,7 +8,7 @@ Reads hw_results.json written by hw_collect.py for each seed's trained circuit
 and frozen twin (same physical qubits, submitted together) and writes
 
     hw_seeds_numbers.tex   \\newcommand-style macros for the text
-    tab_hw_seeds.tex       the tabular body of Table VII
+    tab_hw_seeds.tex       the tabular body of Table 7
 
 Nothing is typed by hand. Seed 42 uses run_frozen_pinned (the frozen run on the
 trained circuit's qubits), exactly as the seed-42 figure does.

@@ -3,7 +3,7 @@
 
     python make_param_figure.py --runs evidence/panther/all_runs.csv --out fig_param_accuracy
 
-Uses the same campaigns as Table III (main, classical, seqnn, qccnn) so the two agree by construction.
+Uses the same campaigns as Table 4 (main, classical, seqnn, qccnn) so the two agree by construction.
 ViT (~16k parameters) is off the shared axis and is annotated at the right edge instead of plotted.
 """
 import argparse, csv, importlib.util, os
