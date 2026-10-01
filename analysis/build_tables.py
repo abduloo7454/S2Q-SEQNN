@@ -131,7 +131,7 @@ def table_main(by, macros):
             gate, basis, nq = r0["gate"], r0["basis"].upper(), r0["n_qubits"]
             tot = int(float(r0["total_params"]))
             dead = dead_params(gate, nq)
-            variant = {"adaptive": "Adaptive", "shared": "Shared", "both": "Both"}[r0["variant"]]
+            variant = {"adaptive": "Adaptive", "shared": "Shared", "both": "Both$^{\\ddagger}$"}[r0["variant"]]
             te = acc(by, ("main", c)); va = acc(by, ("main", c), "val_acc")
             rows.append(f"{DS_NAME[ds]} & {variant} & {r0['frontend'].capitalize()} & {gate}/{basis} & {nq} & "
                         f"{tot} & {tot - dead} & {fmt(te)} \\\\")

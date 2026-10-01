@@ -1,0 +1,20 @@
+# Exact versions of the environment that produced every run in results/.
+numpy==1.26.4
+scipy==1.13.1
+pandas==2.2.2
+scikit-learn==1.5.1
+scikit-image==0.24.0
+matplotlib==3.9.1
+h5py==3.14.0
+pillow==11.3.0
+tqdm==4.66.4
+
+torch==2.3.1
+torchvision==0.18.1
+
+pennylane==0.38.0
+pennylane-lightning==0.38.0
+autograd==1.8.0
+autoray==0.7.2
+rustworkx==0.17.1
+networkx==3.2.1

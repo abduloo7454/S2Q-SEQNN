@@ -1,0 +1,17 @@
+# Training, diagnostics, and analysis.
+#   conda env create -f environment.yml && conda activate s2q
+# Torch is CPU-only: the circuit is simulated on CPU and the classical parts have about
+# 1000 parameters. The 12- to 15-qubit runs and the 28-qubit gradient scan used a CUDA
+# build of the same torch version (--device cuda).
+name: s2q
+channels:
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.9
+  - pip
+  - pytorch=2.3.1
+  - torchvision=0.18.1
+  - cpuonly
+  - pip:
+      - -r requirements-train.txt

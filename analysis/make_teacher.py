@@ -20,6 +20,7 @@ Writes teacher_numbers.tex (macros for the prose) and tab_teacher.tex (supplemen
 import argparse, math, os, re
 import numpy as np, pandas as pd
 from scipy import stats
+from make_power import mde  # same noncentral-t MDE as Table S15
 
 ARMS = [("none_rhoq1", "Trained circuit, $\\rho_q=1$"), ("none", "Trained circuit, $\\rho_q=0.1$"),
         ("frozen_quantum", "Frozen circuit"), ("frozen_rff", "Frozen RFF"), ("classical_only", "No circuit")]
@@ -83,6 +84,14 @@ def main():
         k = f"teacher{SLUG[r.x]}vs{SLUG[r.y]}"
         mac += [macro(k + "delta", f"{r.delta:+.2f}"), macro(k + "lo", f"{r.lo:+.2f}"), macro(k + "hi", f"{r.hi:+.2f}"),
                 macro(k + "pt", ptext(r.p)), macro(k + "pholm", ptext(r.p_holm)), macro(k + "npos", str(r.npos))]
+
+    # minimum detectable effect of the primary contrast (80% power), as in make_power.py
+    d1 = (acc["none_rhoq1"][seeds] - acc["frozen_quantum"][seeds]).values
+    sd1 = d1.std(ddof=1)
+    mac += [macro("teachermde", f"{mde(sd1, n, 0.05):.2f}"),
+            macro("teachermdeholm", f"{mde(sd1, n, 0.05 / len(R)):.2f}")]
+    print(f"primary contrast: sd_d={sd1:.2f}, MDE80 alpha=0.05: {mde(sd1, n, 0.05):.2f}, "
+          f"alpha=0.05/{len(R)}: {mde(sd1, n, 0.05 / len(R)):.2f}")
 
     real_rows = []
     if a.real_runs:

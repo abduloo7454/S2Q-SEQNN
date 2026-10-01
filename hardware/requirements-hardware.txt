@@ -1,0 +1,5 @@
+# Versions used for the hardware runs (steps B and C).
+qiskit==2.5.2
+qiskit-ibm-runtime==0.49.0
+numpy
+pandas

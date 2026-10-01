@@ -1,6 +1,6 @@
-# S2Q-SEQNN: run logs and analysis scripts
+# S2Q-SEQNN: code, run logs, and analysis scripts
 
-Run logs and analysis scripts for
+Model, training, hardware, and analysis code, with every run log, for
 
 > **S2Q-SEQNN: Isolating the Contribution of a Variational Quantum Circuit in a Compact Hybrid Classifier for Earth Observation.**
 > Abdullah, O. Bouhali, S. M. Al-Kuwari, A. F. Salem, M. B. Dastagir. Submitted to *IEEE Transactions on Quantum Engineering*.
@@ -49,9 +49,51 @@ bash reproduce.sh            # writes every table, figure, and macro file to out
 
 Each row of a run log gives the arm, seed, test accuracy, parameter counts, and the flags of the run. Arms with the same seed share the data split, every initialization, and the mini-batch order, so they are paired.
 
-## Training code
+## Repository layout
 
-The model, training, and hardware code is available from the corresponding author on reasonable request. The three datasets are public: Overhead-MNIST (Noever and Noever, 2021), SAT-6 (Basu et al., 2015), and So2Sat LCZ42 (Zhu et al., 2020).
+| Path | Contents |
+|---|---|
+| `src/` | The model and its training script (`sq_seqnn_fast.py`), the SEQNN, QC-CNN, and compact classical baselines, the depolarizing-noise evaluation, and the gate diagnostics |
+| `tools/` | Run manifests for every campaign, result collection, and the tangent-space and barren-plateau diagnostics |
+| `slurm/` | The SLURM scripts that ran the campaigns |
+| `hardware/` | Export, submission, and collection of the IBM Quantum runs (see `hardware/README.md`) |
+| `analysis/` | The scripts that turn `results/` into the paper's tables, figures, and inline numbers |
+| `results/` | Every run log behind the paper |
+
+## Train the model
+
+The training environment is pinned in `environment.yml` (Python 3.9, PyTorch 2.3.1, PennyLane 0.38.0):
+
+```bash
+conda env create -f environment.yml && conda activate s2q
+```
+
+Download the three datasets and place them under `data/`, or point `S2Q_DATA_ROOT` elsewhere:
+
+```
+data/Overhead_MNIST/MNIST/version2/{train,test}/
+data/Sat6_dataset/sat-6-full.mat
+data/So2Sat_LCZ42/{training,validation,testing}.h5
+```
+
+One run, the So2Sat Adaptive configuration at seed 42:
+
+```bash
+python src/sq_seqnn_fast.py --dataset so2sat --frontend-mode global --gate-type CRY \
+    --measure-bases xyz --n-qubits 10 --cls-hidden 10 --seed 42
+```
+
+`--ablation` selects a control (`frozen_quantum`, `frozen_rff`, `classical_only`, `mlp_replace`, `frozen_mlp`, `no_iqp`, `no_reupload`, ...), `--lr-q-factor 1` gives the shared learning rate, and `--teacher far --no-aug` gives the positive control. The exact flags of every configuration are in `tools/make_manifest.py` (main campaign) and `tools/make_manifest_tqe.py` (controls without fusion, 8 to 15 qubits, positive control). A full campaign is a manifest plus the packed SLURM runner:
+
+```bash
+python tools/make_manifest.py --out manifest.csv
+sbatch --array=0-9 slurm/run_packed.sh manifest.csv
+python tools/collect_results.py manifest.csv      # writes results/all_runs.csv
+```
+
+Each run is one CPU core; the 12- to 15-qubit runs and the 28-qubit gradient scan used a CUDA build of the same PyTorch (`slurm/run_packed_gpu.sh`, `slurm/run_bp_gpu.sh`). Arms with the same seed share the data split, every initialization, and the mini-batch order.
+
+The three datasets are public: Overhead-MNIST (Noever and Noever, 2021), SAT-6 (Basu et al., 2015), and So2Sat LCZ42 (Zhu et al., 2020).
 
 ## License and citation
 
