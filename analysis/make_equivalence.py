@@ -29,7 +29,7 @@ MARGINS = (1.0, 0.5)
 
 
 def sg(x):
-    """Signed two-decimal value; exact ties round toward zero, the convention of Tables V and S8."""
+    """Signed two-decimal value; exact ties round toward zero, the convention of Tables V and S7."""
     d = Decimal(repr(round(float(x), 9))).quantize(Decimal("0.01"), rounding=ROUND_HALF_DOWN)
     return f"{d:+.2f}".replace("+0.00", "+0.00").replace("-0.00", "+0.00")
 
