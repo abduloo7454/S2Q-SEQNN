@@ -1,0 +1,45 @@
+cff-version: 1.2.0
+message: "If you use these run logs or analysis scripts, please cite the paper below."
+title: "S2Q-SEQNN: run logs and analysis scripts"
+type: software
+authors:
+  - name: "Abdullah"
+    affiliation: "College of Science and Engineering, Hamad Bin Khalifa University, Doha, Qatar"
+  - family-names: "Bouhali"
+    given-names: "Othmane"
+    affiliation: "College of Science and Engineering, Hamad Bin Khalifa University, Doha, Qatar"
+  - family-names: "Al-Kuwari"
+    given-names: "Saif M."
+    affiliation: "College of Science and Engineering, Hamad Bin Khalifa University, Doha, Qatar"
+  - family-names: "Salem"
+    given-names: "Ahmed F."
+    affiliation: "College of Science and Engineering, Hamad Bin Khalifa University, Doha, Qatar"
+  - family-names: "Dastagir"
+    given-names: "Muhammad B."
+    affiliation: "College of Science and Engineering, Hamad Bin Khalifa University, Doha, Qatar"
+version: 3.0.0
+license: MIT
+repository-code: "https://github.com/abduloo7454/S2Q-SEQNN"
+keywords:
+  - hybrid quantum-classical neural network
+  - variational quantum circuit
+  - random features
+  - barren plateau
+  - tangent space
+  - Earth observation
+preferred-citation:
+  type: article
+  title: "S2Q-SEQNN: Diagnosing Whether a Variational Quantum Circuit Earns Its Place in a Compact Hybrid Classifier"
+  authors:
+    - name: "Abdullah"
+    - family-names: "Bouhali"
+      given-names: "Othmane"
+    - family-names: "Al-Kuwari"
+      given-names: "Saif M."
+    - family-names: "Salem"
+      given-names: "Ahmed F."
+    - family-names: "Dastagir"
+      given-names: "Muhammad B."
+  journal: "IEEE Transactions on Quantum Engineering"
+  year: 2026
+  notes: "Submitted."

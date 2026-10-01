@@ -1,0 +1,7 @@
+# Analysis only: every script in analysis/ needs just these four packages.
+# The released numbers were produced with numpy 1.26.4, scipy 1.13.1, pandas 2.2.2,
+# matplotlib 3.9.1 (Python 3.9) and reproduce identically with newer releases.
+numpy>=1.26
+scipy>=1.13
+pandas>=2.2
+matplotlib>=3.9

@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+.ipynb_checkpoints/
+.DS_Store
+.mplconfig/
+
+# produced locally, never committed
+out/
+data/
+logs/
+tmp/
+*.pt

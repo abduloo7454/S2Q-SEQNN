@@ -1,0 +1,70 @@
+{
+  "backend": "ibm_kingston",
+  "job_id": "datton5vr3kc73em25l0",
+  "n_images": 100,
+  "shots": 4000,
+  "bases": [
+    "x"
+  ],
+  "n_qubits": 8,
+  "gate": "CX",
+  "dataset": "overhead",
+  "seed": 44,
+  "mitigation": true,
+  "physical_qubits": [
+    1,
+    2,
+    3,
+    16,
+    23,
+    24,
+    25,
+    37
+  ],
+  "twoq_gates_per_circuit": [
+    44,
+    52
+  ],
+  "depth": [
+    106,
+    121
+  ],
+  "acc_exact_sim": 0.92,
+  "acc_shot_noise_mean": 0.9190000000000002,
+  "acc_shot_noise_sd": 0.007181848464596084,
+  "shot_repeats": 20,
+  "acc_hardware": 0.92,
+  "prediction_agreement_hw_vs_sim": 0.99,
+  "readout_mae": 0.070895653333207,
+  "readout_rmse": 0.10853731813443697,
+  "readout_corr": 0.9591673854686233,
+  "readout_shrinkage_slope": 0.7889054021018869,
+  "qpu_usage": 115,
+  "per_class": {
+    "0": {
+      "n": 20,
+      "sim": 0.95,
+      "hw": 0.95
+    },
+    "1": {
+      "n": 20,
+      "sim": 0.7,
+      "hw": 0.7
+    },
+    "2": {
+      "n": 20,
+      "sim": 0.95,
+      "hw": 0.95
+    },
+    "3": {
+      "n": 20,
+      "sim": 1.0,
+      "hw": 1.0
+    },
+    "4": {
+      "n": 20,
+      "sim": 1.0,
+      "hw": 1.0
+    }
+  }
+}
