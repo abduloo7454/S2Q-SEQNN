@@ -29,7 +29,7 @@ keywords:
   - Earth observation
 preferred-citation:
   type: article
-  title: "S2Q-SEQNN: Diagnosing Whether a Variational Quantum Circuit Earns Its Place in a Compact Hybrid Classifier"
+  title: "S2Q-SEQNN: Isolating the Contribution of a Variational Quantum Circuit in a Compact Hybrid Classifier for Earth Observation"
   authors:
     - name: "Abdullah"
     - family-names: "Bouhali"
