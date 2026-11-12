@@ -22,8 +22,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
-BLUE, ORANGE, AQUA, YELLOW = "#2a78d6", "#eb6834", "#1baf7a", "#eda100"
-INK, MUTED, LINE, BAND, GREY = "#0b0b0b", "#52514e", "#e6e5e2", "#f3f2ef", "#8c8b86"
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import ieee_style as st                                                    # noqa: E402
+
+BLUE, ORANGE, INK, GREY = st.BLUE, st.RED, st.BLACK, st.GREY
 MAIN_GATE = "CRY"
 
 
@@ -86,86 +89,94 @@ def main():
     S = pd.read_csv(a.scaling_stats)
 
     # ------------------------------------------------------------ figure
-    plt.rcParams.update({"font.family": "serif", "font.size": 8, "axes.labelsize": 8, "axes.edgecolor": "black",
-                         "axes.linewidth": 1.3, "xtick.color": "black", "ytick.color": "black", "text.color": INK,
-                         "xtick.major.size": 3, "ytick.major.size": 3, "xtick.major.width": 1.1,
-                         "ytick.major.width": 1.1, "xtick.minor.width": 0.8, "ytick.minor.width": 0.8,
-                         "axes.labelcolor": INK, "figure.facecolor": "white", "savefig.facecolor": "white"})
-    fig, ax = plt.subplots(1, 3, figsize=(7.16, 2.45), gridspec_kw=dict(wspace=0.4, width_ratios=[1.15, 1, 1]))
-    nq_lo, nq_hi = int(S.nq.min()), int(S.nq.max())
+    # Two rows at full text width: (a) gradient scan and (b) alignment on top, (c) one panel per control below.
+    st.apply()
+    fig = plt.figure(figsize=(st.TEXT_W, 4.1))
+    gs = fig.add_gridspec(2, 1, height_ratios=[1.3, 1.0], hspace=0.44, left=0.085, right=0.99, top=0.985, bottom=0.155)
+    top = gs[0].subgridspec(1, 2, wspace=0.22)
+    bot = gs[1].subgridspec(1, 3, wspace=0.07)
+    A0 = fig.add_subplot(top[0]); A1 = fig.add_subplot(top[1])
+    C = [fig.add_subplot(bot[0])]
+    C += [fig.add_subplot(bot[1], sharey=C[0]), fig.add_subplot(bot[2], sharey=C[0])]
 
-    # (a) gradient scan
-    A0 = ax[0]
-    A0.axvspan(nq_lo - 0.5, nq_hi + 0.5, color=BAND, lw=0, zorder=0)
-    for gate in sorted(per.gate.unique()):
+    # (a) gradient scan at random parameters
+    others = [g_ for g_ in sorted(per.gate.unique()) if g_ != MAIN_GATE]
+    for gate in others:
         g = per[per.gate == gate].sort_values("n")
-        main = gate == MAIN_GATE
-        A0.plot(g.n, g.local, color=BLUE if main else GREY, lw=1.7 if main else 0.8, alpha=1 if main else 0.8,
-                zorder=4 if main else 2)
-        A0.plot(g.n, g.glob, color=INK if main else GREY, lw=1.5 if main else 0.8, ls="--", alpha=1 if main else 0.8,
-                zorder=4 if main else 2)
+        A0.plot(g.n, g.local, color=GREY, lw=0.6, zorder=2)
+        A0.plot(g.n, g.glob, color=GREY, lw=0.6, ls=(0, (4, 2)), zorder=2)
     g = per[per.gate == MAIN_GATE].sort_values("n")
+    A0.plot(g.n, g.local, color=BLUE, lw=1.5, zorder=4)
+    A0.plot(g.n, g.glob, color=INK, lw=1.5, ls=(0, (4, 2)), zorder=4)
     n0, y0 = g.n.iloc[0], g.glob.iloc[0]
     nn = np.array([g.n.min(), g.n.max()])
-    A0.plot(nn, y0 * 2.0 ** (-(nn - n0)), color=MUTED, lw=0.7, ls=":", zorder=1)
+    A0.plot(nn, y0 * 2.0 ** (-(nn - n0)), color=INK, lw=0.7, ls=(0, (1, 1.5)), zorder=1)
     A0.set_yscale("log")
-    A0.set_xlabel("Qubits $n$")
-    A0.set_ylabel(r"$\mathrm{E}_{\theta}[(\partial_k C)^2]$")
-    A0.set_title("(a) Gradients at random $\\theta$", loc="left", fontsize=8, pad=4)
-    hd0 = [Line2D([], [], color=BLUE, lw=1.7, label="local read-out (model)"),
-           Line2D([], [], color=INK, lw=1.5, ls="--", label="global $Z^{\\otimes n}$"),
-           Line2D([], [], color=MUTED, lw=0.8, ls=":", label="$2^{-n}$"),
-           Line2D([], [], color=GREY, lw=0.8, label="CX, XX entanglers")]
-    A0.legend(handles=hd0, loc="lower left", frameon=False, fontsize=6.8, handlelength=1.8, borderaxespad=0.1)
-    A0.text((nq_lo + nq_hi) / 2, 0.97, "trained", transform=A0.get_xaxis_transform(), ha="center", va="top",
-            fontsize=7, color="black")
+    st.log_minor(A0.yaxis)
+    A0.set_xticks(range(4, int(per.n.max()) + 1, 4))
+    A0.set_xlim(per.n.min() - 0.8, per.n.max() + 0.8)
+    A0.set_xlabel("Number of qubits $n_q$")
+    A0.set_ylabel(r"Mean squared gradient $\mathrm{E}_{\theta}[(\partial_k C)^2]$")
+    hd0 = [Line2D([], [], color=BLUE, lw=1.5, label=f"Local read-out ({MAIN_GATE})"),
+           Line2D([], [], color=INK, lw=1.5, ls=(0, (4, 2)), label=f"Global $Z^{{\\otimes n_q}}$ ({MAIN_GATE})"),
+           Line2D([], [], color=GREY, lw=0.6, label=", ".join(others) + " variants"),
+           Line2D([], [], color=INK, lw=0.7, ls=(0, (1, 1.5)), label="$2^{-n_q}$")]
+    st.legend(A0, handles=hd0, loc="lower left", handlelength=2.6)
 
-    # (b) alignment vs 2-design level
-    A1 = ax[1]
+    # (b) alignment of the trained checkpoints vs the 2-design level
     agg = G.groupby("n_qubits").agg(Af=("A_final", "mean"), Afs=("A_final", "std"), Ai=("A_init", "mean"),
                                     Ais=("A_init", "std"), A2=("A_2design_final", "mean")).reset_index()
-    A1.errorbar(agg.n_qubits - 0.2, agg.Ai, yerr=agg.Ais, fmt="o", color=BLUE, mfc="white", ms=3.8, mew=1,
-                elinewidth=0.9, capsize=0, zorder=3)
-    A1.errorbar(agg.n_qubits + 0.2, agg.Af, yerr=agg.Afs, fmt="o", color=BLUE, ms=3.8, mec="white", mew=0.5,
-                elinewidth=0.9, capsize=0, zorder=4)
-    A1.plot(agg.n_qubits, agg.A2, color=MUTED, ls="--", lw=1, marker="s", ms=3, mfc="white", zorder=3)
+    eb = dict(elinewidth=0.8, capsize=2, capthick=0.8, ms=4.2, mew=0.8, zorder=4)
+    A1.errorbar(agg.n_qubits - 0.14, agg.Ai, yerr=agg.Ais, fmt="o", color=BLUE, mfc="white", label="Initialization", **eb)
+    A1.errorbar(agg.n_qubits + 0.14, agg.Af, yerr=agg.Afs, fmt="o", color=BLUE, mfc=BLUE, label="After training", **eb)
+    A1.plot(agg.n_qubits, agg.A2, color=INK, ls=(0, (4, 2)), lw=1.1, marker="s", ms=3.8, mfc="white", mew=0.8,
+            zorder=3, label="2-design level")
+    for r in (agg.iloc[0], agg.iloc[-1]):          # gap between the trained alignment and the 2-design level
+        x = r.n_qubits
+        A1.annotate("", xy=(x, r.A2 * 1.22), xytext=(x, r.Af / 1.22),
+                    arrowprops=dict(arrowstyle="<->", color=INK, lw=0.6, shrinkA=0, shrinkB=0, mutation_scale=6), zorder=2)
+        left = x == agg.n_qubits.iloc[0]
+        A1.text(x + (0.18 if left else -0.18), math.sqrt(r.Af * r.A2), f"{r.Af / r.A2:.0f}$\\times$",
+                ha="left" if left else "right", va="center", fontsize=7.5)
     A1.set_yscale("log")
+    st.log_minor(A1.yaxis)
     A1.set_xticks(NQg)
-    A1.set_xlabel("Qubits $n_q$")
+    A1.set_xlim(min(NQg) - 0.6, max(NQg) + 0.6)
+    A1.set_xlabel("Number of qubits $n_q$")
     A1.set_ylabel("Alignment $A$")
-    A1.set_title("(b) Trained checkpoints", loc="left", fontsize=8, pad=4)
-    A1.text(agg.n_qubits.iloc[0], agg.A2.min() * 1.2, "2-design level", color="black", ha="left", va="bottom", fontsize=7)
-    A1.text(agg.n_qubits.iloc[-1], agg.Af.iloc[-1] * 0.62, "init (open), trained", color=BLUE, ha="right", va="top", fontsize=7)
-    A1.set_ylim(agg.A2.min() / 2.5, 1.6)
+    A1.set_ylim(agg.A2.min() / 2.5, 2.0)
+    st.legend(A1, loc="lower left", handlelength=2.4)
 
-    # (c) accuracy delta
-    A2 = ax[2]
-    A2.axhspan(-0.5, 0.5, color=BAND, lw=0, zorder=0)
-    A2.axhline(0, color=INK, lw=0.8, zorder=1)
-    off = {"frozen_quantum": -0.12, "frozen_rff": 0.0, "classical_only": 0.12}
-    col = {"frozen_quantum": ORANGE, "frozen_rff": AQUA, "classical_only": YELLOW}
-    mk = {"frozen_quantum": "s", "frozen_rff": "D", "classical_only": "^"}
+    # (c) paired accuracy difference, one panel per control
+    arms = ("frozen_quantum", "frozen_rff", "classical_only")
+    col = {"frozen_quantum": ORANGE, "frozen_rff": BLUE, "classical_only": INK}
+    mk = {"frozen_quantum": "s", "frozen_rff": "o", "classical_only": "^"}
     lab = {"frozen_quantum": "Frozen circuit", "frozen_rff": "Frozen RFF", "classical_only": "No circuit"}
-    for arm in ("frozen_quantum", "frozen_rff", "classical_only"):
+    for axc, arm in zip(C, arms):
         g = S[S.arm == arm].sort_values("nq")
-        x = g.nq + off[arm]
-        A2.plot(x, g.delta, color=col[arm], lw=1.1, zorder=3)
-        A2.errorbar(x, g.delta, yerr=[g.delta - g.ci_lo, g.ci_hi - g.delta], fmt=mk[arm], color=col[arm], ms=3.6,
-                    mec="white", mew=0.5, elinewidth=0.9, capsize=0, zorder=4)
-    A2.set_xticks(sorted(S.nq.unique()))
-    A2.set_xlabel("Qubits $n_q$")
-    A2.set_ylabel(r"$\Delta$ = trained $-$ control (pp)")
-    A2.set_title("(c) Accuracy, 95% CI", loc="left", fontsize=8, pad=4)
-    hd = [Line2D([], [], color=col[k], marker=mk[k], ms=3.6, mec="white", mew=0.5, lw=1.1, label=lab[k])
-          for k in ("frozen_quantum", "frozen_rff", "classical_only")]
-    A2.legend(handles=hd, loc="upper left", frameon=False, fontsize=7, handlelength=1.6, borderaxespad=0.2,
-              ncol=1, bbox_to_anchor=(0.0, 1.0))
-    ylo, yhi = A2.get_ylim(); A2.set_ylim(min(ylo, -0.8), max(yhi, 1.75))
-    for axx in ax:
-        for s_ in ("top", "right"):
-            axx.spines[s_].set_visible(False)
-        axx.grid(axis="y", color=LINE, lw=0.5, zorder=0)
-    fig.subplots_adjust(left=0.085, right=0.99, top=0.9, bottom=0.18)
+        axc.axhline(0, color=INK, lw=0.6, zorder=1)
+        for y in (-0.5, 0.5):
+            axc.axhline(y, color=INK, lw=0.6, ls=(0, (1, 1.5)), zorder=1)
+        axc.errorbar(g.nq, g.delta, yerr=[g.delta - g.ci_lo, g.ci_hi - g.delta], fmt=mk[arm], color=col[arm],
+                     ms=4.2, mew=0.8, elinewidth=0.8, capsize=2, capthick=0.8, zorder=4)
+        axc.set_xticks(sorted(S.nq.unique()))
+        axc.set_xlim(S.nq.min() - 0.6, S.nq.max() + 0.6)
+        axc.set_xlabel("Number of qubits $n_q$")
+        axc.text(0.035, 0.94, lab[arm], transform=axc.transAxes, ha="left", va="top", fontsize=8, zorder=5,
+                 bbox=dict(boxstyle="square,pad=0.15", facecolor="white", edgecolor="none"))
+    lo = min(S[S.arm.isin(arms)].ci_lo.min(), -0.5); hi = max(S[S.arm.isin(arms)].ci_hi.max(), 0.5)
+    lo_r, hi_r = math.floor(lo * 2) / 2, math.ceil(hi * 2) / 2
+    C[0].set_ylim(lo_r, hi_r + 0.3)
+    C[0].set_yticks(np.arange(lo_r, hi_r + 0.01, 0.5))
+    C[0].set_ylabel(r"Accuracy difference $\Delta$ (pp)")
+    for axc in C[1:]:
+        axc.tick_params(labelleft=False)
+    for axx in [A0, A1] + C:
+        axx.grid(axis="y")
+        axx.set_axisbelow(True)
+    A0.text(0.5, -0.235, "(a)", transform=A0.transAxes, ha="center", va="top", fontsize=8)
+    A1.text(0.5, -0.235, "(b)", transform=A1.transAxes, ha="center", va="top", fontsize=8)
+    C[1].text(0.5, -0.33, "(c)", transform=C[1].transAxes, ha="center", va="top", fontsize=8)
     for ext in ("pdf", "png"):
         fig.savefig(os.path.join(a.out_dir, f"fig_register.{ext}"), dpi=1000)
 
